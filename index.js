@@ -4,7 +4,10 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ 
+    origin: ['http://localhost:3000', 'https://boxdelabonita-server.onrender.com'],
+    default: 'https://boxdelabonita-server.onrender.com'
+}));
 
 const uploadProducts = require('./routes/uploadProduct');
 const fetchProducts = require('./routes/fetchproducts');
@@ -21,8 +24,6 @@ mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(conn => console.log('database connected')).catch(err => console.log(err));
-
-app.use(express.static('public'));
 
 app.listen(process.env.port || '8080', (err) => {
     if (err){

@@ -5,8 +5,8 @@ const cors = require('cors');
 require('dotenv').config();
 app.use(express.json());
 app.use(cors({ 
-    origin: ['http://localhost:3000', 'https://boxdelabonita-server.onrender.com'],
-    default: 'https://boxdelabonita-server.onrender.com'
+    origin: ['http://localhost:3000', 'https://boxdelabonita.onrender.com'],
+    default: 'https://boxdelabonita.onrender.com/'
 }));
 
 const uploadProducts = require('./routes/uploadProduct');

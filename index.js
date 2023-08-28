@@ -25,7 +25,7 @@ mongoose.connect(process.env.MONGO_URI, {
     useUnifiedTopology: true
 }).then(conn => console.log('database connected')).catch(err => console.log(err));
 
-app.listen(process.env.port || '8080', (err) => {
+app.listen(process.env.PORT || '8080', (err) => {
     if (err){
         return console.log(err)
     }

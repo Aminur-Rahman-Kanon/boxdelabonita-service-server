@@ -22,7 +22,6 @@ router.post('/', upload.array('photo'), async (req, res) => {
     const photos = req.files;
 
     await productModel.find({ title: data.title }).then(async result => {
-        console.log(result);
         if (result.length){
             return res.json({status: 'product exist', product: result })
         }

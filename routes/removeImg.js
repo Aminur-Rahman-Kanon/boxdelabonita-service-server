@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const firebase = require('firebase/app');
 const { getStorage, ref, deleteObject } = require('firebase/storage');
 const firebaseConfig = require('../public/firebase/firebase');
@@ -10,15 +9,14 @@ firebase.initializeApp(firebaseConfig);
 
 const storage = getStorage()
 
-const upload = multer({ storage: multer.memoryStorage() });
-
 router.post('/', async (req, res) => {
     const { category, img, title } = req.body;
+    console.log(category, title, img);
     
     try {
-        const deleteRef = ref(storage, `products/${category}/${title}/${img}`);
+        const imgRef = ref(storage, `products/${category}/${title}/${img}`);
 
-        await deleteObject(deleteRef)
+        deleteObject(imgRef)
         .then(async result => {
             await productModel.findOne({ title }).then(async response => {
                 const imgObj = response.img;

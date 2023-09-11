@@ -6,8 +6,6 @@ const trendingProduct = require('../schema/schema').trendingProductsModel;
 const newArrival = require('../schema/schema').newArrivalsModel;
 const allProduct = require('../schema/schema').productModel;
 
-
-
 router.get('/', async (req, res) => {
 
     try {

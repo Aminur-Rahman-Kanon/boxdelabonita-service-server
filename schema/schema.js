@@ -11,7 +11,7 @@ const product = {
     rating: { type: Number, required: true },
     reviews: { type: Array, required: true },
     price: { type: Object, required: true },
-    details: { type: String, required: true },
+    // details: { type: String, required: true },
     deliveryTime: String,
     color: { type: Object, required: true },
     img: { type: Object, required: true },

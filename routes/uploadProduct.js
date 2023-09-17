@@ -39,8 +39,6 @@ router.post('/', upload.array('photo'), async (req, res) => {
         
                 await getDownloadURL(snapshot.ref).then(url => imgUrl[photos[i].originalname] = url);
             }
-
-            console.log(imgUrl);
         
             data['rating'] = 0;
             data['reviews'] = [];
@@ -54,7 +52,7 @@ router.post('/', upload.array('photo'), async (req, res) => {
                 rating: data.rating,
                 reviews: data.reviews,
                 price: data.productPrice,
-                details: data.details,
+                // details: data.details,
                 color: data.productColor,
                 img: imgUrl,
                 description: data.description,
@@ -84,7 +82,6 @@ router.post('/', upload.array('photo'), async (req, res) => {
                     break;
                 
                 case 'Trending Products':
-                    console.log('Trending Products');
                     await productModel.create( dataToUpload ).then(async result => {
                         await trendingProductsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
                         .catch(err => res.status(400).json({ status: 'failed' }))

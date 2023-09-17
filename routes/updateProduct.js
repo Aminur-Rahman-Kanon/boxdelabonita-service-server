@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
                 subCategory: data.productSubCategory,
                 stock: data.stock,
                 price: data.price,
-                details: data.details,
+                // details: data.details,
                 description: data.description
             }
         })

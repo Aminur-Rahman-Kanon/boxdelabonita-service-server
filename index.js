@@ -27,11 +27,30 @@ app.use('/add-photo', addPhoto);
 app.use('/remove-img', removeImg);
 app.use('/update-product-details', updateProduct);
 
+// const { hotDealsModel, popularProductsModel, trendingProductsModel, newArrivalsModel, productModel } = require('./schema/schema');
+
+
 mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 5000,
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(conn => console.log('database connected')).catch(err => console.log(err));
+
+// productModel.find({}).lean().then(data => {
+//     const updatedData = data.map(async item => {
+//         const copied = JSON.parse(JSON.stringify(item));
+//         copied.title = copied.title.toLowerCase();
+//         copied.category = copied.category.toLowerCase();
+//         copied.subCategory = copied.subCategory.toLowerCase();
+//         await productModel.updateOne({ _id: item._id }, {
+//             $set: {
+//                 title: copied.title,
+//                 category: copied.category,
+//                 subCategory: copied.subCategory
+//             }
+//         }).then(resu => console.log(resu)).catch(err => console.log(err));
+//     })
+// })
 
 app.listen(process.env.PORT || '8080', (err) => {
     if (err){

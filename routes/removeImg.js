@@ -11,7 +11,6 @@ const storage = getStorage()
 
 router.post('/', async (req, res) => {
     const { category, img, title } = req.body;
-    console.log(category, title, img);
     
     try {
         const imgRef = ref(storage, `products/${category}/${title}/${img}`);

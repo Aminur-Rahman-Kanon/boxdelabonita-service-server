@@ -73,7 +73,7 @@ router.post('/', upload.array('photo'), async (req, res) => {
                     }).catch(err => res.json({ status: 'error' }))
                     break;
         
-                case 'popular poroducts':
+                case 'popular products':
                     await productModel.create( dataToUpload ).then(async result => {
                         await popularProductsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
                         .catch(err => res.status(400).json({ status: 'failed' }))

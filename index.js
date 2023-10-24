@@ -17,6 +17,8 @@ const fetchProduct = require('./routes/fetchProduct');
 const addPhoto = require('./routes/addPhoto');
 const removeImg = require('./routes/removeImg');
 const updateProduct = require('./routes/updateProduct');
+const removeProduct = require('./routes/removeProduct');
+const addNewImg = require('./routes/addNewImg');
 
 app.use('/upload-products', uploadProducts);
 app.use('/admin-login', adminLogin);
@@ -26,8 +28,10 @@ app.use('/fetch-product', fetchProduct);
 app.use('/add-photo', addPhoto);
 app.use('/remove-img', removeImg);
 app.use('/update-product-details', updateProduct);
+app.use('/remove-product', removeProduct);
+app.use('/add-new-img', addNewImg);
 
-// const { hotDealsModel, popularProductsModel, trendingProductsModel, newArrivalsModel, productModel } = require('./schema/schema');
+const { hotDealsModel, popularProductsModel, trendingProductsModel, newArrivalsModel, productModel } = require('./schema/schema');
 
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -51,6 +55,22 @@ mongoose.connect(process.env.MONGO_URI, {
 //         }).then(resu => console.log(resu)).catch(err => console.log(err));
 //     })
 // })
+
+// const firebase = require('firebase/app');
+// const firebaseConfig = require('./public/firebase/firebase');
+// const { getStorage, deleteObject, ref } = require('firebase/storage');
+
+// firebase.initializeApp(firebaseConfig);
+// const storage = getStorage();
+
+// try {
+//     const deleteRef = ref(storage, 'products/Backpack/Test 1/blue');
+//     deleteObject(deleteRef).then(result => {
+//         console.log('success');
+//     })
+// } catch (error) {
+//     console.log('failed');
+// }
 
 app.listen(process.env.PORT || '8080', (err) => {
     if (err){

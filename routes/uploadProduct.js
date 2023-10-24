@@ -40,7 +40,7 @@ router.post('/', upload.array('photo'), async (req, res) => {
                 await getDownloadURL(snapshot.ref).then(url => imgUrl[photos[i].originalname] = url);
             }
         
-            data['rating'] = 0;
+            const productColor = Object.keys(imgUrl);
             data['reviews'] = [];
             data['customerReviews'] = [];
         
@@ -52,43 +52,42 @@ router.post('/', upload.array('photo'), async (req, res) => {
                 rating: data.rating,
                 reviews: data.reviews,
                 price: data.productPrice,
-                // details: data.details,
-                color: data.productColor,
+                color: productColor,
                 img: imgUrl,
                 description: data.description,
                 customerReviews: data.customerReviews,
             }
         
             switch(data.productSubCategory) {
-                case 'Hot Deals':
+                case 'hot deals':
                     await productModel.create( dataToUpload ).then(async result => {
                         await hotDealsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
                         .catch(err => res.status(400).json({ status: 'failed' }))
                     }).catch(err => res.json({ status: 'error' }))
                     break;
         
-                case 'New Arrivals':
+                case 'new arrivals':
                     await productModel.create( dataToUpload ).then(async result => {
                         await newArrivalsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
                         .catch(err => res.status(400).json({ status: 'failed' }))
                     }).catch(err => res.json({ status: 'error' }))
                     break;
         
-                case 'Popular Poroducts':
+                case 'popular poroducts':
                     await productModel.create( dataToUpload ).then(async result => {
                         await popularProductsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
                         .catch(err => res.status(400).json({ status: 'failed' }))
                     }).catch(err => res.json({ status: 'error' }))
                     break;
                 
-                case 'Trending Products':
+                case 'trending products':
                     await productModel.create( dataToUpload ).then(async result => {
                         await trendingProductsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
                         .catch(err => res.status(400).json({ status: 'failed' }))
                     }).catch(err => res.json({ status: 'error' }))
                     break;
 
-                case 'None':
+                case 'none':
                     await productModel.create( dataToUpload ).then(result => res.json({ status: 'success' })).catch(err => res.json({ status: 'failed' }))
                     break;
                     

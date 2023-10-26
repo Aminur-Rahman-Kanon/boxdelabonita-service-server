@@ -21,12 +21,21 @@ const product = {
     subCategory: { type: String, requied: true }
 }
 
+const placedOrder = {
+    deviceId: String,
+    email: String,
+    orderInfo: {type: Object, required: true},
+    customerInfo: {type: Object, required: true},
+    products: {type: Object, required: true}
+}
+
 const adminModel = mongoose.model('admin', admin);
 const productModel = mongoose.model('products', product);
 const hotDealsModel = mongoose.model('hot-deals', product);
 const newArrivalsModel = mongoose.model('new-arrivals', product);
 const popularProductsModel = mongoose.model('popular-products', product);
 const trendingProductsModel = mongoose.model('trending-products', product);
+const placeOrderModel = mongoose.model('orders', placedOrder);
 
 module.exports = {
     adminModel,
@@ -34,5 +43,6 @@ module.exports = {
     hotDealsModel,
     newArrivalsModel,
     popularProductsModel,
-    trendingProductsModel
+    trendingProductsModel,
+    placeOrderModel
 }

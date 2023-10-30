@@ -7,7 +7,7 @@ const admin = {
 
 const product = {
     stock: { type: Number, required: true },
-    title: { type: String, required: true },
+    title: { type: String, required: true, index: { unique: true } },
     rating: { type: Number, required: true },
     reviews: { type: Array, required: true },
     price: { type: Object, required: true },
@@ -17,8 +17,8 @@ const product = {
     description: { type: String, required: true },
     customerReviews: Array,
     purchased: Number,
-    category: { type: String, requied: true },
-    subCategory: { type: String, requied: true }
+    category: { type: String, requied: true, index: { unique: true } },
+    subCategory: { type: String, requied: true, index: { unique: true } }
 }
 
 const placedOrder = {

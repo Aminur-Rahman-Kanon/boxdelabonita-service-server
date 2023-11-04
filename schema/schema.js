@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const admin = {
+const admin = new Schema({
     email: { type: String, required: true },
     password: { type: String, required: true }
-}
+})
 
-const product = {
+const product = new Schema({
     stock: { type: Number, required: true },
-    title: { type: String, required: true, index: { unique: true } },
+    title: { type: String, required: true, index: true },
     rating: { type: Number, required: true },
     reviews: { type: Array, required: true },
     price: { type: Object, required: true },
@@ -17,17 +18,17 @@ const product = {
     description: { type: String, required: true },
     customerReviews: Array,
     purchased: Number,
-    category: { type: String, requied: true, index: { unique: true } },
-    subCategory: { type: String, requied: true, index: { unique: true } }
-}
+    category: { type: String, requied: true, index: true },
+    subCategory: { type: String, requied: true }
+})
 
-const placedOrder = {
-    deviceId: String,
+const placedOrder = new Schema({
+    deviceId: { type: String, index: true },
     email: String,
     orderInfo: {type: Object, required: true},
     customerInfo: {type: Object, required: true},
     products: {type: Object, required: true}
-}
+})
 
 const adminModel = mongoose.model('admin', admin);
 const productModel = mongoose.model('products', product);

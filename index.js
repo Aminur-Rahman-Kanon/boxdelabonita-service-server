@@ -1,5 +1,4 @@
 const express = require('express');
-// const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 const pool = require('./db/db_init/db_init');
@@ -10,10 +9,6 @@ app.use(cors({
     origin: ['http://localhost:3000', 'https://boxdelabonita.onrender.com'],
     default: 'https://boxdelabonita.onrender.com/'
 }));
-
-pool.query("SELECT * FROM product WHERE subcategory = 'New Arrivals'", (err, result) => {
-    console.log(result.rows);
-})
 
 const uploadProducts = require('./routes/uploadProduct');
 const fetchProducts = require('./routes/fetchproducts');
@@ -27,7 +22,6 @@ const removeProduct = require('./routes/removeProduct');
 const addNewImg = require('./routes/addNewImg');
 const fetchPlacedOrders = require('./routes/fetchPlacedOrders');
 const changeOrderStatus = require('./routes/changeOrderStatus');
-const { placeOrderModel } = require('./schema/schema');
 
 app.use('/upload-products', uploadProducts);
 app.use('/admin-login', adminLogin);
@@ -41,12 +35,6 @@ app.use('/remove-product', removeProduct);
 app.use('/add-new-img', addNewImg);
 app.use('/fetch-placed-orders', fetchPlacedOrders);
 app.use('/change-order-status', changeOrderStatus);
-
-// mongoose.connect(process.env.MONGO_URI, {
-//     serverSelectionTimeoutMS: 5000,
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// }).then(conn => console.log('database connected')).catch(err => console.log(err));
 
 app.listen(process.env.PORT || '8080', (err) => {
     if (err){

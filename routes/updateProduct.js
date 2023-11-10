@@ -1,27 +1,19 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const productModel = require('../schema/schema').productModel;
+const pool = require('../db/db_init/db_init');
 
 router.post('/', async (req, res) => {
     const { data } = req.body;
 
-    try {
-        await productModel.collection.updateOne({ title: data.productTitle }, {
-            $set: {
-                title: data.title,
-                category: data.productCategory,
-                subCategory: data.productSubCategory,
-                stock: data.stock,
-                price: data.price,
-                // details: data.details,
-                description: data.description
-            }
-        })
-        return res.json({ status: 'success' });
-    } catch (error) {
-        return res.json({ status: 'error' });
-    }
-    
+    const price = JSON.stringify(data.price);
+
+    console.log(data);
+    console.log(price);
+
+    await pool.query(`UPDATE product SET stock = ${data.stock}, title = '${data.title}', price = '${price}', color = '{${data.colors}}', description = '${data.description}', category = '${data.productCategory}', subcategory = '${data.productSubCategory}' WHERE title = '${data.title}';`, (err, result) => {
+                            if (err) return res.status(400).json({ status: 'failed' })
+                            return res.status(200).json({ status: 'success' });
+                        });
 })
 
 module.exports = router;

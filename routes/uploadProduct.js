@@ -4,11 +4,7 @@ const multer = require('multer');
 const firebase = require('firebase/app');
 const firebaseConfig = require('../public/firebase/firebase');
 const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require('firebase/storage');
-const productModel = require('../schema/schema').productModel;
-const hotDealsModel = require('../schema/schema').hotDealsModel;
-const newArrivalsModel = require('../schema/schema').newArrivalsModel;
-const popularProductsModel = require('../schema/schema').popularProductsModel;
-const trendingProductsModel = require('../schema/schema').trendingProductsModel;
+const pool = require('../db/db_init/db_init');
 
 
 firebase.initializeApp(firebaseConfig);
@@ -21,82 +17,38 @@ router.post('/', upload.array('photo'), async (req, res) => {
     const data = JSON.parse(req.body.data);
     const photos = req.files;
 
-    await productModel.find({ title: data.title }).then(async result => {
-        if (result.length){
-            return res.json({status: 'product exist', product: result })
-        }
-        else {
-            //uploading fikes to the firestore storage
-            const imgUrl = {};
-            for (let i=0; i< photos.length; i++){
-                const storageRef = ref(storage, `products/${data.productCategory}/${data.title}/${photos[i].originalname}`);
-        
-                const metadata = {
-                    contentType: 'image/jpeg'
-                }
-        
-                const snapshot = await uploadBytesResumable(storageRef, photos[i].buffer, metadata);
-        
-                await getDownloadURL(snapshot.ref).then(url => imgUrl[photos[i].originalname] = url);
-            }
-        
-            const productColor = Object.keys(imgUrl);
-            data['reviews'] = [];
-            data['customerReviews'] = [];
-        
-            const dataToUpload = {
-                category: data.productCategory,
-                subCategory: data.productSubCategory,
-                stock: data.stock,
-                title: data.title,
-                rating: data.rating,
-                reviews: data.reviews,
-                price: data.productPrice,
-                color: productColor,
-                img: imgUrl,
-                description: data.description,
-                customerReviews: data.customerReviews,
-            }
-        
-            switch(data.productSubCategory) {
-                case 'hot deals':
-                    await productModel.create( dataToUpload ).then(async result => {
-                        await hotDealsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
-                        .catch(err => res.status(400).json({ status: 'failed' }))
-                    }).catch(err => res.json({ status: 'error' }))
-                    break;
-        
-                case 'new arrivals':
-                    await productModel.create( dataToUpload ).then(async result => {
-                        await newArrivalsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
-                        .catch(err => res.status(400).json({ status: 'failed' }))
-                    }).catch(err => res.json({ status: 'error' }))
-                    break;
-        
-                case 'popular products':
-                    await productModel.create( dataToUpload ).then(async result => {
-                        await popularProductsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
-                        .catch(err => res.status(400).json({ status: 'failed' }))
-                    }).catch(err => res.json({ status: 'error' }))
-                    break;
-                
-                case 'trending products':
-                    await productModel.create( dataToUpload ).then(async result => {
-                        await trendingProductsModel.create( dataToUpload ).then(response => res.json({ status: 'success' }))
-                        .catch(err => res.status(400).json({ status: 'failed' }))
-                    }).catch(err => res.json({ status: 'error' }))
-                    break;
-
-                case 'none':
-                    await productModel.create( dataToUpload ).then(result => res.json({ status: 'success' })).catch(err => res.json({ status: 'failed' }))
-                    break;
-                    
-                default:
-                    return res.json({ status: 'invalid request' })
-            }
-        }
-    }).catch(err => res.json({ status: 'something went wrong' }));
+    const checkExistProduct = await pool.query(`select * from product where title = '${data.title}'`);
+    if (checkExistProduct.rowCount) return res.json({ status: 'product exist', product: checkExistProduct.rows });
     
+    //uploading fikes to the firestore storage
+    try {
+        const imgUrl = [];
+        for (let i=0; i< photos.length; i++){
+            const storageRef = ref(storage, `products/${data.productCategory}/${data.title}/${photos[i].originalname}`);
+    
+            const metadata = {
+                contentType: 'image/jpeg'
+            }
+    
+            const snapshot = await uploadBytesResumable(storageRef, photos[i].buffer, metadata);
+    
+            await getDownloadURL(snapshot.ref).then(url => imgUrl.push(url));
+        }
+    
+        const price = JSON.stringify(data.productPrice);
+        // const reviews = {name: 'user_1', comment: 'asjd asldj sladj', name: 'user_2', comment: 'ojhlkjklhjfgh jfkhl'}
+        // const customerReviews = JSON.stringify(reviews);
+    
+        await pool.query(`INSERT INTO product (stock, title, rating, price, color, img, description, category, subcategory) 
+                        VALUES (${data.stock}, '${data.title}', ${data.rating}, '${price}', '{${data.colors}}', '{${imgUrl}}', '${data.description}', '${data.productCategory}', '${data.productSubCategory}');`, (err, result) => {
+            if (err) return res.status(400).json({ status: 'failed' });
+            if (result.rowCount){
+                return res.status(200).json({ status: 'success' });
+            }
+        });
+    } catch (error) {
+        return res.status(500);
+    }
 })
 
 module.exports = router;

@@ -3,12 +3,22 @@ const app = express();
 const cors = require('cors');
 const pool = require('./db/db_init/db_init');
 require('dotenv').config();
+const mongoose = require("mongoose");
 
 app.use(express.json());
 app.use(cors({ 
     origin: ['http://localhost:3000', 'https://boxdelabonita.onrender.com'],
     default: 'https://boxdelabonita.onrender.com/'
 }));
+
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true
+}, (err) => {
+    if (err) {
+        console.log(err);
+    }
+    console.log("database connected")
+})
 
 const uploadProducts = require('./routes/uploadProduct');
 const fetchProducts = require('./routes/fetchproducts');

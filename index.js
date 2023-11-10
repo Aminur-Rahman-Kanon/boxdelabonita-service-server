@@ -13,12 +13,8 @@ app.use(cors({
 
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true
-}, (err) => {
-    if (err) {
-        console.log(err);
-    }
-    console.log("database connected")
-})
+}).then(con => console.log("database connected"))
+    .catch(err => console.log(err))
 
 const uploadProducts = require('./routes/uploadProduct');
 const fetchProducts = require('./routes/fetchproducts');

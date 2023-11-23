@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db/db_init/db_init');
+const { productModel } = require('../schema/schema');
 const firebase = require('firebase/app');
 const firebaseConfig = require('../public/firebase/firebase');
 const { getStorage, deleteObject, ref } = require('firebase/storage');
@@ -23,9 +23,10 @@ router.post('/', async (req, res) => {
             });
         }
 
-        await pool.query(`DELETE FROM product WHERE title = '${title}';`, async (err, result) => {
-            if (err) return res.status(400).json({ status: 'failed' });
-            return res.status(200).json({ status: 'success' });
+        await productModel.findOne({ title: title }).then(async result => {
+            if (!result) return res.status(400).json({ status: 'failed' })
+            await productModel.deleteOne({ title: title }).then(finish => res.status(200).json({ status: 'success' }))
+            .catch(err => res.status(400).json({ status: 'failed' }))
         })
     } catch (error) {
         return res.status(500);

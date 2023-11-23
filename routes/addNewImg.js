@@ -4,10 +4,9 @@ const multer = require('multer');
 const firebase = require('firebase/app');
 const { getStorage, getDownloadURL, uploadBytesResumable, ref, deleteObject } = require('firebase/storage');
 const firebaseConfig = require('../public/firebase/firebase');
-const pool = require('../db/db_init/db_init');
+const { productModel } = require('../schema/schema');
 
 const upload = multer({ storage: multer.memoryStorage() })
-
 firebase.initializeApp(firebaseConfig);
 const storage = getStorage();
 
@@ -24,16 +23,16 @@ router.post('/', upload.single('photo'), async (req, res) => {
     const snapshot = await uploadBytesResumable(imgRef, img.buffer, metadata);
 
     await getDownloadURL(snapshot.ref).then(async url => {
-        await pool.query(`SELECT * FROM product WHERE title = '${data.title}';`, async (err, result) => {
-            if (err) return res.status(400).json({ status: 'failed' });
-            if (result.rowCount){
-                const imgs = result.rows[0].img;
-                imgs.push(url);
-                await pool.query(`UPDATE product SET img = '{${imgs}}' WHERE title = '${data.title}';`, (err, anotherResult) => {
-                    if (err) return res.status(400).json({ status: 'failed' });
-                    return res.status(200).json({ status: 'success' });
-                })
-            }
+        await productModel.findOne({ title: data.title }).then(async result => {
+            if (!result) return res.status(400).json({ status: 'failed' });
+            const imgs = result.img;
+            imgs.push(url);
+            await productModel.updateOne({ title: data.title }, {
+                $set: {
+                    img: imgs
+                }
+            }).then(finish => res.status(200).json({ status: 'success' }))
+            .catch(err => res.status(400).json({ status: 'failed' }));
         })
     })
 })

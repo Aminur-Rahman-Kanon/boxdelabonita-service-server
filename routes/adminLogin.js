@@ -8,7 +8,7 @@ router.post('/', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const userExist = await adminModel.findOne({ email }).lean();
+        const userExist = await adminModel.findOne({ email });
         if (!userExist) return res.json({ status: 'user not found' });
     
         const passCheck = await bcrypt.compare(password, userExist.password);

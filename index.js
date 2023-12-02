@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const pool = require('./db/db_init/db_init');
 require('dotenv').config();
 const mongoose = require("mongoose");
+const { cronJob } = require('./public/utilities/utilities');
 
 app.use(express.json());
 app.use(cors({ 
-    origin: ['http://localhost:3000', 'https://boxdelabonita.onrender.com'],
+    origin: ['http://localhost:3001', 'https://boxdelabonita.onrender.com'],
     default: 'https://boxdelabonita.onrender.com/'
 }));
 
@@ -42,10 +42,11 @@ app.use('/add-new-img', addNewImg);
 app.use('/fetch-placed-orders', fetchPlacedOrders);
 app.use('/change-order-status', changeOrderStatus);
 
+cronJob();
+
 app.listen(process.env.PORT || '8080', (err) => {
     if (err){
         return console.log(err)
     }
-
     console.log('Server is runnning on port 8080');
 })

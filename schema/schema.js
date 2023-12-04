@@ -20,11 +20,11 @@ const product = new Schema({
 })
 
 const placedOrder = new Schema({
-    deviceId: { type: String, index: true },
-    email: String,
-    orderInfo: {type: Object, required: true},
-    customerInfo: {type: Object, required: true},
-    products: {type: Object, required: true}
+    deviceId: {type: String},
+    email: {type: String},
+    orderInfo: {type: Object},
+    customerInfo: {type: Object},
+    products: {type: Object}
 })
 
 const adminModel = mongoose.model('admin', admin);

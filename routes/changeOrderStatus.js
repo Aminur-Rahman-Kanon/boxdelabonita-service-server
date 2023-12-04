@@ -9,7 +9,6 @@ router.post('/', async (req, res) => {
 
     try {
         const item = await placeOrderModel.findOne({ _id: id });
-        console.log(item);
         if (!item) return res.status(400).json({ status: 'failed' });
 
         const orderInfo = JSON.parse(JSON.stringify(item.orderInfo));

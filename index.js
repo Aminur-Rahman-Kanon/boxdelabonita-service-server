@@ -7,7 +7,7 @@ const { cronJob } = require('./public/utilities/utilities');
 
 app.use(express.json());
 app.use(cors({ 
-    origin: ['http://localhost:3001', 'https://boxdelabonita.onrender.com'],
+    origin: ['http://localhost:3000', 'https://boxdelabonita.onrender.com'],
     default: 'https://boxdelabonita.onrender.com/'
 }));
 

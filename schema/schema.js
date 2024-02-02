@@ -14,6 +14,7 @@ const product = new Schema({
     color: { type: Array, required: true },
     img: { type: Array, required: true },
     description: { type: String, required: true },
+    ladingDescription: { type: String },
     customerReviews: Array,
     category: { type: String, requied: true, index: true },
     subCategory: { type: String, requied: true }

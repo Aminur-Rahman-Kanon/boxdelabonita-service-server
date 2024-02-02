@@ -33,7 +33,7 @@ router.post('/', upload.array('photo'), async (req, res) => {
         }
 
         await productModel.create({
-            stock: data.stock, title: data.title, rating: data.rating, price: data.productPrice, color: data.colors, img: imgUrl, description: data.description, category: data.productCategory, subCategory: data.productSubCategory
+            stock: data.stock, title: data.title, rating: data.rating, price: data.productPrice, color: data.colors, img: imgUrl, description: data.description, landingDescription: data.landingDescription, category: data.productCategory, subCategory: data.productSubCategory
         }).then(result => res.status(200).json({ status: 'success' }))
         .catch(err => res.status(400).json({ status: 'failed' }))
     } catch (error) {

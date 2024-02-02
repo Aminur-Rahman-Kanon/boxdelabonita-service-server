@@ -12,6 +12,7 @@ router.post('/', async (req, res) => {
                 $set: {
                     title: data.title,
                     description: data.description,
+                    landingDescription: data.landingDescription,
                     category: data.productCategory,
                     subCategory: data.productSubCategory,
                     stock: data.stock,

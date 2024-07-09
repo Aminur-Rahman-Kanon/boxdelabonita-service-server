@@ -21,6 +21,7 @@ router.post('/', async (req, res) => {
             await productModel.findOne({ title: title }).then(async result => {
                 if (!result) return res.status(400).json({ status: 'failed' });
                 const imgs = result.img;
+
                 imgs.splice(imgIdx, 1);
                 await productModel.updateOne({ title: title }, {
                     $set: {

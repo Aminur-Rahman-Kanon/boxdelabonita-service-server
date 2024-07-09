@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const firebase = require('firebase/app');
-const { getStorage, getDownloadURL, uploadBytesResumable, ref, deleteObject } = require('firebase/storage');
+const { getStorage, getDownloadURL, uploadBytesResumable, ref } = require('firebase/storage');
 const firebaseConfig = require('../public/firebase/firebase');
 const { productModel } = require('../schema/schema');
 
@@ -14,14 +14,21 @@ router.post('/', upload.single('photo'), async (req, res) => {
     const data = JSON.parse(req.body.data);
     const img = req.file;
 
+    //if no data then abort
     if (!data || !img) return res.status(400).status({ status: 'invalid request' })
 
+    //setting references for the images
     const imgRef = ref(storage, `products/${data.category}/${data.title}/${img.originalname}`);
+
+    //adding metadata for the images
     const metadata = {
         contentType: 'image/jpeg'
     }
+
+    //getting snapshot object
     const snapshot = await uploadBytesResumable(imgRef, img.buffer, metadata);
 
+    //getting url and then storing them in the database
     await getDownloadURL(snapshot.ref).then(async url => {
         await productModel.findOne({ title: data.title }).then(async result => {
             if (!result) return res.status(400).json({ status: 'failed' });

@@ -4,12 +4,14 @@ const cors = require('cors');
 require('dotenv').config();
 const mongoose = require("mongoose");
 const { cronJob } = require('./public/utilities/utilities');
+const path = require('path');
 
 app.use(express.json());
 app.use(cors({ 
     origin: ['http://localhost:3000', 'https://boxdelabonita.onrender.com'],
     default: 'https://boxdelabonita.onrender.com/'
 }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true
@@ -21,7 +23,7 @@ const fetchProducts = require('./routes/fetchproducts');
 const adminLogin = require('./routes/adminLogin');
 const tokenValidation = require('./routes/tokenValidation');
 const fetchProduct = require('./routes/fetchProduct');
-const changePhoto = require('./routes/changePhoto');
+const changeImg = require('./routes/changeImg');
 const removeImg = require('./routes/removeImg');
 const updateProduct = require('./routes/updateProduct');
 const removeProduct = require('./routes/removeProduct');
@@ -34,7 +36,7 @@ app.use('/admin-login', adminLogin);
 app.use('/verify-token', tokenValidation);
 app.use('/fetch-products', fetchProducts);
 app.use('/fetch-product', fetchProduct);
-app.use('/change-photo', changePhoto);
+app.use('/change-img', changeImg);
 app.use('/remove-img', removeImg);
 app.use('/update-product-details', updateProduct);
 app.use('/remove-product', removeProduct);

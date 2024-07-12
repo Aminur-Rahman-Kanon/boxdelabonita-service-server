@@ -12,7 +12,7 @@ const product = new Schema({
     rating: { type: Number, required: true },
     price: { type: Object, required: true },
     color: { type: Array, required: true },
-    img: { type: Array, required: true },
+    img: { type: Object, required: true },
     description: { type: String, required: true },
     ladingDescription: { type: String },
     customerReviews: Array,

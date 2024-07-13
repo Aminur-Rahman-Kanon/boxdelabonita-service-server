@@ -2,8 +2,7 @@ const https = require('https');
 const fs = require('fs');
 
 const saveFile = (dir, file, name) => {
-    // const checkFileExist  = fs.existsSync(`${dir}/${name}`, { });
-    const checkFileExist  = fs.existsSync(dir);
+    const checkFileExist  = fs.existsSync(`${dir}/${name}`, { });
     let productName = name;
     if (checkFileExist){
         const fileExt = name.split('.').at(-1);
@@ -51,7 +50,7 @@ const storeProductImg = (dir, file, productTitle, category) => {
         }
         else {
             //create product title directory and then save the file
-            fs.mkdir(directory, (err) =>  {
+            fs.mkdirSync(directory, { recursive: true }, (err) =>  {
                 if (err){
                     throw Error(err);
                 }

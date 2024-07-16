@@ -7,7 +7,7 @@ router.post('/', async (req, res) => {
 
     try {
         if (product){
-            await productModel.find({ title: product }).then(result => res.status(200).json({ status: 'success', data: result }))
+            await productModel.find({ title: product }).lean().then(result => res.status(200).json({ status: 'success', data: result }))
             .catch(err => res.status(400).json({ status: 'failed' }));
         }
     } catch (error) {

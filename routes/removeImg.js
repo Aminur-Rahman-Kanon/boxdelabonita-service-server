@@ -1,47 +1,64 @@
 const express = require('express');
 const router = express.Router();
-const firebase = require('firebase/app');
-const { getStorage, ref, deleteObject, listAll } = require('firebase/storage');
-const firebaseConfig = require('../public/firebase/firebase');
 const { productModel } = require('../schema/schema');
-
-firebase.initializeApp(firebaseConfig);
-
-const storage = getStorage()
+const path = require('path');
+const fs = require('fs');
 
 router.post('/', async (req, res) => {
     
-    const { category, imgIdx, title } = req.body;
+    const { category, imgId, title } = req.body;
 
-    const refImg = ref(storage, `products/${category}/${title}`);
+    if (!category && !!imgId && !title) return res.status(403).json({ status: 'bad request' })
 
-    listAll(refImg).then(result => {
-        result.items.forEach(itms => console.log(itms.name));
-    })
-    .catch(err => console.log(err));
-
-    // try {
-    //     const imgRef = ref(storage, `products/${category}/${title}/image ${imgIdx+1}`);
-    
-    //     deleteObject(imgRef)
-    //     .then(async result => {
-    //         await productModel.findOne({ title: title }).then(async result => {
-    //             if (!result) return res.status(400).json({ status: 'failed' });
-    //             const imgs = result.img;
-
-    //             imgs.splice(imgIdx, 1);
-    //             await productModel.updateOne({ title: title }, {
-    //                 $set: {
-    //                     img: imgs
-    //                 }
-    //             }).then(finish => res.status(200).json({ status: 'success' }))
-    //             .catch(err => res.status(400).json({ status: failed }))
-    //         })
-    //     })
-    //     .catch(err => res.json({ status: 'failed' }));
-    // } catch (error) {
-    //     return res.status(500);
-    // }
+    try {
+        const filePath = path.join(__dirname, '..', 'public', 'products', `${category}`, `${title}`, `${imgId}`);
+        const fileExist = fs.existsSync(filePath);
+        if (fileExist){
+            try {
+                fs.unlinkSync(filePath, err => {
+                    if (err) return res.status(404).json({ status: 'failed' })
+                })
+                //update database
+                await productModel.findOne({ title }).then(async result => {
+                    const imgs = result.img || {};
+                    if (Object.keys(imgs).length){
+                        delete imgs[imgId];
+                        await productModel.updateOne({ title }, {
+                            $set: {
+                                img: imgs
+                            }
+                        }).then(final => res.status(200).json({ status: 'success' })).catch(err => res.status(404).json({ status: 'failed' }))
+                    }
+                    else {
+                        return res.status(500).json({ status: 'failed' })
+                    }
+                })
+            } catch (error) {
+                return res.status(500).json({ status: 'failed' });
+            }
+        }
+        else {
+            await productModel.findOne({ title }).then(async prd => {
+                const imgs = prd.img || {};
+                if (Object.keys(imgs).length){
+                    delete imgs[imgId];
+                    await productModel.updateOne({ title }, {
+                        $set: {
+                            img: imgs
+                        }
+                    })
+                    .then(final => res.status(200).json({ status: 'success' }))
+                    .catch(err => res.status(404).json({ status: 'failed' }));
+                }
+                else {
+                    return res.status(404).json({ status: 'file not found' });
+                }
+            })
+        }
+    }
+    catch (error) {
+        return res.status(500);
+    }
 
 })
 

@@ -10,12 +10,12 @@ router.post('/', upload.single('photo'), async (req, res) => {
     console.log(img);
     console.log(data);
     
-    try {
+    // try {
         
         
-    } catch (error) {
-        return res.status(500);
-    }
+    // } catch (error) {
+    //     return res.status(500);
+    // }
 
 })
 

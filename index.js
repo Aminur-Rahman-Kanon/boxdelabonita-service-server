@@ -11,7 +11,6 @@ app.use(cors({
     origin: ['http://localhost:3000', 'https://boxdelabonita.onrender.com'],
     default: 'https://boxdelabonita.onrender.com/'
 }));
-app.use(express.static(path.join(__dirname, 'public')));
 
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true
@@ -44,11 +43,16 @@ app.use('/add-new-img', addNewImg);
 app.use('/fetch-placed-orders', fetchPlacedOrders);
 app.use('/change-order-status', changeOrderStatus);
 
-cronJob();
+app.use(express.static(path.join(__dirname, 'public')));
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'public')));
+}
+
 
 app.listen(process.env.PORT || '8080', (err) => {
     if (err){
         return console.log(err)
     }
+    cronJob();
     console.log('Server is runnning on port 8080');
 })

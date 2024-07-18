@@ -29,8 +29,10 @@ const removeProduct = require('./routes/removeProduct');
 const addNewImg = require('./routes/addNewImg');
 const fetchPlacedOrders = require('./routes/fetchPlacedOrders');
 const changeOrderStatus = require('./routes/changeOrderStatus');
+const uploadNewImg = require('./routes/uploadNewImg');
 
 app.use('/upload-products', uploadProducts);
+app.use('/upload-new-img', uploadNewImg);
 app.use('/admin-login', adminLogin);
 app.use('/verify-token', tokenValidation);
 app.use('/fetch-products', fetchProducts);
@@ -47,7 +49,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, 'public')));
 }
-
 
 app.listen(process.env.PORT || '8080', (err) => {
     if (err){

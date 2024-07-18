@@ -17,22 +17,29 @@ router.post('/', upload.single('photo'), async (req, res) => {
 
     if (result.status === 'success' && result.url) {
         await productModel.findOne({ title: data.title }).then( async resp => {
-            if (resp.$isEmpty()){
-                return res.status(404).json({ status: 'failed' })
+            if (!resp){
+                const imgObj = {};
+                imgObj[result.name] = result.url;
+                data['img'] = imgObj;
+
+                await productModel.create(data)
+                .then(result => res.status(200).json({ status: 'success' }))
+                .catch(err => res.status(404).json({ status: 'failed' }))
             }
-
-            let imgs = resp.img;
-            if (!imgs){
-                imgs = {};
-            }
-
-            imgs[result.name] = result.url;
-
-            await productModel.updateOne({ title: data.title }, {
-                $set: {
-                    'img': {...imgs}
+            else {
+                let imgs = resp.img;
+                if (!imgs){
+                    imgs = {};
                 }
-            }).then(fnl => res.status(200).json({ status: 'success' })).catch(err => res.status(400).json({ status: 'failed' }))
+    
+                imgs[result.name] = result.url;
+    
+                await productModel.updateOne({ title: data.title }, {
+                    $set: {
+                        'img': {...imgs}
+                    }
+                }).then(fnl => res.status(200).json({ status: 'success' })).catch(err => res.status(400).json({ status: 'failed' }))
+            }
         }).catch(err => res.status(400).json({ status: 'failed' }));
     }
 })

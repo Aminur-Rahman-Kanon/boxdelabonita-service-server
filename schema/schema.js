@@ -7,17 +7,17 @@ const admin = new Schema({
 })
 
 const product = new Schema({
-    stock: { type: Number, required: true },
+    stock: { type: Number },
     title: { type: String, required: true, index: true },
-    rating: { type: Number, required: true },
-    price: { type: Object, required: true },
-    color: { type: Array, required: true },
-    img: { type: Object, required: true },
-    description: { type: String, required: true },
+    rating: { type: Number  },
+    price: { type: Object  },
+    color: { type: Array },
+    img: { type: Object  },
+    description: { type: String  },
     ladingDescription: { type: String },
     customerReviews: Array,
     category: { type: String, requied: true, index: true },
-    subCategory: { type: String, requied: true }
+    subCategory: { type: String }
 })
 
 const placedOrder = new Schema({

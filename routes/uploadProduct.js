@@ -1,18 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const firebase = require('firebase/app');
-const firebaseConfig = require('../public/firebase/firebase');
-const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require('firebase/storage');
 const { productModel } = require('../schema/schema');
+const { storeProductImg } = require('../public/utilities/utilities');
+const path = require('path');
 
-firebase.initializeApp(firebaseConfig);
-const storage = getStorage();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/', upload.array('photo'), async (req, res) => {
     const data = JSON.parse(req.body.data);
     const photos = req.files;
+
+    if (!data || !photos) return res.status(404).json({ status: 'failed' })
     
     await productModel.find({ title: data.title }).lean().then(result => {
         if (result.length){
@@ -21,24 +20,29 @@ router.post('/', upload.array('photo'), async (req, res) => {
     })
     
     //uploading fikes to the firestore storage
-    try {
-        const imgUrl = [];
-        for (let i=0; i< photos.length; i++){
-            const storageRef = ref(storage, `products/${data.productCategory}/${data.title}/${photos[i].originalname}`);
-            const metadata = {
-                contentType: 'image/jpeg'
-            }
-            const snapshot = await uploadBytesResumable(storageRef, photos[i].buffer, metadata);
-            await getDownloadURL(snapshot.ref).then(url => imgUrl.push(url));
+    const img = {};
+    photos.forEach(async itm => {
+        const dir = path.join(__dirname, '..', `public/products/${data.productCategory}`);
+        const result = await storeProductImg(dir, itm, data.title, data.productCategory);
+    
+        if (result.status === 'success' && result.url) {
+            img[result.name] = result.url;
         }
+    })
 
-        await productModel.create({
-            stock: data.stock, title: data.title, rating: data.rating, price: data.productPrice, color: data.colors, img: imgUrl, description: data.description, landingDescription: data.landingDescription, category: data.productCategory, subCategory: data.productSubCategory
-        }).then(result => res.status(200).json({ status: 'success' }))
-        .catch(err => res.status(400).json({ status: 'failed' }))
-    } catch (error) {
-        return res.status(500);
-    }
+    data['img'] = img;
+
+    await productModel.create({ category:data.productCategory,
+                                subCategory: data.productSubCategory,
+                                stock: data.stock,
+                                title: data.title,
+                                price: data.productPrice,
+                                description: data.description,
+                                ladingDescription: data.ladingDescription,
+                                rating: data.rating,
+                                color: data.colors,
+                                img: img
+     }).then(result => res.status(200).json({ status: 'success' })).catch(err => res.status(404).json({ status: 'failed' }));
 })
 
 module.exports = router;

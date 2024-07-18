@@ -30,6 +30,7 @@ const addNewImg = require('./routes/addNewImg');
 const fetchPlacedOrders = require('./routes/fetchPlacedOrders');
 const changeOrderStatus = require('./routes/changeOrderStatus');
 const uploadNewImg = require('./routes/uploadNewImg');
+const deleteOrder = require('./routes/deleteOrder');
 
 app.use('/upload-products', uploadProducts);
 app.use('/upload-new-img', uploadNewImg);
@@ -37,6 +38,7 @@ app.use('/admin-login', adminLogin);
 app.use('/verify-token', tokenValidation);
 app.use('/fetch-products', fetchProducts);
 app.use('/fetch-product', fetchProduct);
+app.use('/delete-order', deleteOrder);
 app.use('/change-img', changeImg);
 app.use('/remove-img', removeImg);
 app.use('/update-product-details', updateProduct);

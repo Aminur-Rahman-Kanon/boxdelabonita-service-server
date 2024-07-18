@@ -15,7 +15,7 @@ router.post('/', upload.array('photo'), async (req, res) => {
     
     await productModel.find({ title: data.title }).lean().then(async result => {
         if (result.length){
-            await productModel.updateMany({ title: data.title }, {
+            await productModel.updateOne({ title: data.title }, {
                 $set: {
                     category: data.productCategory,
                     stock: data.stock,
